@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "groq-js": "^1.0.0"   // replace with actual npm package if different
+    "groq-js": "^1.0.0" 
   }
 }
