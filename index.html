@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; }
+    .message { margin: 5px 0; }
+    .user { font-weight: bold; }
+    .bot { color: blue; }
+    input { width: 80%; padding: 5px; }
+    button { padding: 5px 10px; }
+  </style>
+</head>
+<body>
+  <h1>Chatbot</h1>
+  <div id="chat"></div>
+  <input type="text" id="input" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('input');
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage('You', message, 'user');
+      input.value = '';
+
+      try {
+        const res = await fetch('/api/backend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        appendMessage('Bot', data.reply, 'bot');
+      } catch (err) {
+        appendMessage('Bot', 'Error: ' + err.message, 'bot');
+      }
+    }
+
+    function appendMessage(sender, text, cls) {
+      const div = document.createElement('div');
+      div.className = 'message ' + cls;
+      div.textContent = sender + ': ' + text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Allow Enter to send
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
